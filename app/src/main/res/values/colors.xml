@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="old_mauve">#66394A</color>
+    <color name="mauve">#A25572</color>
+    <color name="gray">#D6D6D6</color>
+    <color name="gray_hint_text">#737272</color>
+    <color name="gray_bt">#D9D9D9</color>
+    <color name="gray_search">#7ED9D9D9</color>
+    <color name="gray_search_text">#A5A2A2</color>
+    <color name="gray_strok_order_box">#D5D5D5</color>
+    <color name="white_cart_item">#F4F4F4</color>
+    <color name="green_for_price">#4CAF50</color>
+</resources>
