@@ -78,7 +78,6 @@
             </LinearLayout>
 
 
-
         </LinearLayout>
 
         <LinearLayout
@@ -109,24 +108,46 @@
                 android:textColor="@color/gray_hint_text"
                 android:textSize="12sp" />
 
-
-            <TextView
-                android:id="@+id/product_count"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="14dp"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:fontFamily="@font/cairo_semi_bold"
+                    android:text="منتجات"
+                    android:textColor="@color/gray_hint_text"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/product_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_semi_bold"
+                    android:text="6"
+                    android:textColor="@color/gray_hint_text"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/cairo_semi_bold"
-                android:text="6 منتجات"
+                android:text="د.أ"
+                android:layout_marginHorizontal="5dp"
                 android:textColor="@color/gray_hint_text"
                 android:textSize="12sp" />
-
-
             <TextView
                 android:id="@+id/total_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/cairo_bold"
-                android:text="100.00 د.أ"
+                android:text="100.00"
                 android:textColor="@color/green_for_price"
                 android:textSize="12sp" />
 
