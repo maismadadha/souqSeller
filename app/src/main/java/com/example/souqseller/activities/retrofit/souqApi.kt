@@ -33,4 +33,10 @@ interface souqApi {
         @Query("status") status: String?
     ): Call<List<OrderResponse>>
 
+
+    @GET("order/details")
+    fun getOrderDetails(
+        @Query("order_id") orderId: Int
+    ): Call<OrderResponse>
+
 }

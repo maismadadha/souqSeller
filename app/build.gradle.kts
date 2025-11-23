@@ -60,4 +60,6 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")// Use the same version as Retrofit
     implementation ("com.google.code.gson:gson:2.10.1")// Us
 
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+
 }

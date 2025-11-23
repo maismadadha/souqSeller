@@ -65,7 +65,7 @@ class NewOrdersAdapter(
         holder.itemView.setOnClickListener {
             val pos = holder.adapterPosition
             if (pos != RecyclerView.NO_POSITION) {
-                listener.onClick(item.id)
+                listener.onClick(pos)
             }
         }
     }

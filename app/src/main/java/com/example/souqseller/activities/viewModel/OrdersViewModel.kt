@@ -14,6 +14,7 @@ class OrdersViewModel : ViewModel() {
 
     private val orders = MutableLiveData<List<OrderResponse>>()
     private val errorLiveData = MutableLiveData<String>()
+    private val orderDetailsLiveData = MutableLiveData<OrderResponse>()
 
 
     fun getOrdersByStatus(seseionId: Int, status: String) {
@@ -46,9 +47,36 @@ class OrdersViewModel : ViewModel() {
             }
         })
     }
+    fun getOrderDetails(orderId: Int) {
+        RetrofitInterface.api.getOrderDetails(orderId).enqueue(object :
+            Callback<OrderResponse> {
+            override fun onResponse(
+                call: Call<OrderResponse?>,
+                response: Response<OrderResponse?>
+            ) {
+                if (response.isSuccessful && response.body() != null) {
+                    orderDetailsLiveData.value = response.body()
+                }else {
+                    errorLiveData.value = "فشل في جلب تفاصيل الطلب"
+                    Log.e("OrdersVM", "Details error code: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(
+                call: Call<OrderResponse?>,
+                t: Throwable
+            ) {
+                errorLiveData.value = t.message ?: "مشكلة في الاتصال"
+                Log.e("OrdersVM", "Details failure: ${t.message}")
+            }
+        })
+    }
 
     fun observeOrdersLiveData(): LiveData<List<OrderResponse>> {
         return orders
+    }
+    fun observeOrderDetailsLiveData(): LiveData<OrderResponse> {
+        return orderDetailsLiveData
     }
     fun observeErrorLiveData(): LiveData<String> = errorLiveData
 
