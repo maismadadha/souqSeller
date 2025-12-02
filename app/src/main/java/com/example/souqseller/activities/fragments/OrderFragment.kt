@@ -30,7 +30,7 @@ class OrderFragment : Fragment() {
         val adapter = OrdersViewPagerAdapter(requireActivity())
         binding.viewPager.adapter = adapter
 
-        val tabTitles =arrayOf("جديدة","قيد التجهيز","منتهية")
+        val tabTitles =arrayOf("جديدة","قيد التجهيز","جاهزة","منتهية")
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager){tab, position ->
             tab.text = tabTitles[position]

@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.souqcustomer.retrofit.RetrofitInterface
 import com.example.souqseller.activities.pojo.OrderResponse
+import com.example.souqseller.activities.pojo.UpdateOrderStatusRequest
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,6 +16,7 @@ class OrdersViewModel : ViewModel() {
     private val orders = MutableLiveData<List<OrderResponse>>()
     private val errorLiveData = MutableLiveData<String>()
     private val orderDetailsLiveData = MutableLiveData<OrderResponse>()
+    private val statusUpdated = MutableLiveData<Boolean>()
 
 
     fun getOrdersByStatus(seseionId: Int, status: String) {
@@ -72,6 +74,40 @@ class OrdersViewModel : ViewModel() {
         })
     }
 
+    fun updateOrderStatus(orderId: Int, newStatus: String) {
+
+        val body = UpdateOrderStatusRequest(
+            status = newStatus,
+        )
+
+        RetrofitInterface.api.updateOrderStatus(orderId, body)
+            .enqueue(object : Callback<OrderResponse> {
+
+                override fun onResponse(
+                    call: Call<OrderResponse?>,
+                    response: Response<OrderResponse?>
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+
+                        orderDetailsLiveData.value = response.body()
+                        statusUpdated.value = true  // ← فقط هون
+                    } else {
+                        statusUpdated.value = false
+                        errorLiveData.value = "فشل في تحديث حالة الطلب"
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call<OrderResponse?>,
+                    t: Throwable
+                ) {
+                    statusUpdated.value = false
+                    errorLiveData.value = t.message ?: "خطأ في الاتصال"
+                }
+            })
+    }
+
+
     fun observeOrdersLiveData(): LiveData<List<OrderResponse>> {
         return orders
     }
@@ -79,6 +115,7 @@ class OrdersViewModel : ViewModel() {
         return orderDetailsLiveData
     }
     fun observeErrorLiveData(): LiveData<String> = errorLiveData
+    fun observeStatusUpdated(): LiveData<Boolean> = statusUpdated
 
 
 }

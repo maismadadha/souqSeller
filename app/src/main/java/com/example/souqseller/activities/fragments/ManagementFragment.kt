@@ -5,56 +5,116 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.example.souqseller.R
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import com.example.souqseller.activities.adapters.CategoriesPagerAdapter
+import com.example.souqseller.activities.viewModel.StoreManagementViewModel
+import com.example.souqseller.databinding.FragmentManagementBinding
+import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.textfield.TextInputEditText
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ManagementFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ManagementFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentManagementBinding
+    private lateinit var viewModel: StoreManagementViewModel
+    private var sellerId: Int = 0
+
+    private lateinit var pagerAdapter: CategoriesPagerAdapter
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        viewModel = ViewModelProvider(requireActivity())[StoreManagementViewModel::class.java]
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_management, container, false)
+    ): View {
+        binding = FragmentManagementBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ManagementFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ManagementFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val prefs = requireContext().getSharedPreferences("souq_prefs", AppCompatActivity.MODE_PRIVATE)
+        sellerId = prefs.getInt("SELLER_ID", 0)
+
+        viewModel.getStoreCategories(sellerId)
+        observeCategoriesLiveData()
+
+        binding.btnAddCategory.setOnClickListener {
+            showAddCategoryDialog()
+        }
+    }
+
+
+    private fun showAddCategoryDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_category, null)
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val input = dialogView.findViewById<TextInputEditText>(R.id.etCategoryName)
+        val btnAdd = dialogView.findViewById<TextView>(R.id.btnAddCategoryDialog)
+        val btnCancel = dialogView.findViewById<TextView>(R.id.btnCancelDialog)
+
+        btnAdd.setOnClickListener {
+
+            val name = input.text.toString().trim()
+            if (name.isEmpty()) {
+                input.error = "أدخل اسم الفئة"
+                return@setOnClickListener
+            }
+
+            viewModel.addStoreCategory(sellerId, name)
+            dialog.dismiss()
+        }
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+
+        dialog.show()
+    }
+
+
+    private fun observeCategoriesLiveData() {
+        viewModel.getStoreCategoriesLiveData().observe(viewLifecycleOwner) { list ->
+            if (list.isNullOrEmpty()) return@observe
+
+            pagerAdapter = CategoriesPagerAdapter(requireActivity(), list, sellerId)
+            binding.viewPagerCategories.adapter = pagerAdapter
+
+            binding.tabLayoutCategories.removeAllTabs()
+
+            TabLayoutMediator(
+                binding.tabLayoutCategories,
+                binding.viewPagerCategories
+            ) { tab, pos ->
+                tab.text = list[pos].name
+            }.attach()
+
+
+            binding.tabLayoutCategories.post {
+                val tabStrip = binding.tabLayoutCategories.getChildAt(0) as ViewGroup
+                for (i in 0 until tabStrip.childCount) {
+                    val tabView = tabStrip.getChildAt(i)
+                    val params = tabView.layoutParams as ViewGroup.MarginLayoutParams
+                    params.setMargins(20, 0, 20, 0)
+                    tabView.layoutParams = params
+                    tabView.setPadding(40, 20, 40, 20)
                 }
             }
+        }
     }
+
+
 }

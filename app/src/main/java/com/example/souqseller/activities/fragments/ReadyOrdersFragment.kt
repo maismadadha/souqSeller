@@ -9,15 +9,17 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.souqseller.R
 import com.example.souqseller.activities.activities.OrderDetailsActivity
-import com.example.souqseller.activities.adapters.DoneOrdersAdapter
+import com.example.souqseller.activities.adapters.PreparingOrdersAdapter
 import com.example.souqseller.activities.interface0.OnClick
 import com.example.souqseller.activities.viewModel.OrdersViewModel
-import com.example.souqseller.databinding.FragmentDoneOrdersBinding
+import com.example.souqseller.databinding.FragmentPreparingOrdersBinding
+import com.example.souqseller.databinding.FragmentReadyOrdersBinding
 
-class DoneOrdersFragment : Fragment() {
 
-    private lateinit var binding: FragmentDoneOrdersBinding
+class ReadyOrdersFragment : Fragment() {
+    private lateinit var binding: FragmentReadyOrdersBinding
     private lateinit var viewModel: OrdersViewModel
     private var sellerId: Int = 0
 
@@ -29,39 +31,41 @@ class DoneOrdersFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentDoneOrdersBinding.inflate(inflater, container, false)
+    ): View? {
+        binding = FragmentReadyOrdersBinding.inflate(inflater, container, false)
         return binding.root
-    }
 
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val prefs = requireContext().getSharedPreferences("souq_prefs", AppCompatActivity.MODE_PRIVATE)
+        val prefs =
+            requireContext().getSharedPreferences("souq_prefs", AppCompatActivity.MODE_PRIVATE)
         sellerId = prefs.getInt("SELLER_ID", 0)
 
-        // الطلبات المنتهية
-        viewModel.getOrdersByStatus(sellerId, "DELIVERED")
+        // الطلبات الجاهزة
+        viewModel.getOrdersByStatus(sellerId, "OUT_FOR_DELIVERY")
 
         viewModel.observeOrdersLiveData().observe(viewLifecycleOwner) { orders ->
-            val adapter = DoneOrdersAdapter(
+            val adapter = PreparingOrdersAdapter(
                 orders,
                 object : OnClick {
                     override fun onClick(position: Int) {
                         val orderId = orders[position].id
-                        val intent = Intent(requireContext(), OrderDetailsActivity::class.java)
+                        val intent =
+                            Intent(requireContext(), OrderDetailsActivity::class.java)
                         intent.putExtra("order_id", orderId)
                         startActivity(intent)
                     }
                 }
             )
-            binding.rvDoneOrders.adapter = adapter
-            binding.rvDoneOrders.layoutManager =
+            binding.rvPreparingOrders.adapter = adapter
+            binding.rvPreparingOrders.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
     }
     override fun onResume() {
         super.onResume()
-        viewModel.getOrdersByStatus(sellerId,"DELIVERED")
+        viewModel.getOrdersByStatus(sellerId,"OUT_FOR_DELIVERY")
     }
 }

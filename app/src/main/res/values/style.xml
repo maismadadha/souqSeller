@@ -10,4 +10,10 @@
     </style>
 
 
+    <style name="TabTextStyle">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/cairo_semi_bold</item>
+
+    </style>
+
 </resources>

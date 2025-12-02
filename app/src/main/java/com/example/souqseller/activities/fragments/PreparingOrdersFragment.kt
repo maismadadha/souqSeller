@@ -62,4 +62,8 @@ class PreparingOrdersFragment : Fragment() {
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
     }
+    override fun onResume() {
+        super.onResume()
+        viewModel.getOrdersByStatus(sellerId,"PREPARING")
+    }
 }

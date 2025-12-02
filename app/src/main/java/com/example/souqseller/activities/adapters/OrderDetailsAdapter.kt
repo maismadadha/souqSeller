@@ -40,8 +40,9 @@ class OrderDetailsAdapter( private var items: List<OrderItem>): RecyclerView.Ada
 
     override fun getItemCount(): Int =items.size
 
-    fun setItems(newItems: List<OrderItem>) {
-        items = newItems
+    fun setItems(newItems: List<OrderItem>?) {
+        items = newItems ?: emptyList()   // ← أهم سطر
         notifyDataSetChanged()
     }
+
 }

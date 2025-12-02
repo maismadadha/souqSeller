@@ -11,5 +11,5 @@ data class Product(
     val attributes: Any?,     // أحيانًا null
     val created_at: String,
     val updated_at: String,
-    val main_image_url: String
+    val main_image_url: String,
 )

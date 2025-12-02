@@ -6,16 +6,18 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.souqseller.activities.fragments.DoneOrdersFragment
 import com.example.souqseller.activities.fragments.NewOrdersFragment
 import com.example.souqseller.activities.fragments.PreparingOrdersFragment
+import com.example.souqseller.activities.fragments.ReadyOrdersFragment
 
 class OrdersViewPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
     override fun createFragment(position: Int): Fragment {
         return when(position){
             0 -> NewOrdersFragment()
             1 -> PreparingOrdersFragment()
-            2 -> DoneOrdersFragment()
+            2 -> ReadyOrdersFragment()
+            3 -> DoneOrdersFragment()
             else -> NewOrdersFragment()
         }
     }
 
-    override fun getItemCount(): Int =3
+    override fun getItemCount(): Int =4
 }
