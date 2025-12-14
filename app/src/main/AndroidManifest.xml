@@ -16,11 +16,16 @@
         android:theme="@style/Theme.SouqSeller"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activities.activities.ProductDetailsActivity"
+            android:name=".activities.activities.ProductEditActivity"
             android:exported="false" />
         <activity
             android:name=".activities.activities.AddProductActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".activities.activities.ProductDetailsActivity"
+            android:exported="false" />
+
         <activity
             android:name=".activities.activities.OrderDetailsActivity"
             android:exported="false" />

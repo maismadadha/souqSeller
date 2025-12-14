@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="4dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/gray_strok_order_box"
+    android:backgroundTint="@color/white"
+    android:layout_marginHorizontal="2dp"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginHorizontal="4dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etValueLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/cairo_regular"
+            android:hint="قيمة التخصيص: مثال كبير"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/indicator_selected" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

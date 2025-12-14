@@ -16,7 +16,6 @@ data class OrderResponse(
     val created_at: String,
     val updated_at: String,
     val customer_name: String?,
-
     val items: List<OrderItem>
 
 )

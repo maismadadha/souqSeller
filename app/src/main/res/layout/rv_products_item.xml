@@ -45,11 +45,11 @@
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/btn_edit_product"
+                android:id="@+id/btn_delete_product"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_edit_product" />
+                android:src="@drawable/ic_delete" />
 
         </LinearLayout>
 
@@ -69,18 +69,17 @@
                 android:id="@+id/product_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:fontFamily="@font/cairo_semi_bold"
                 android:text="معطف نسائي"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/product_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:fontFamily="@font/cairo_medium"
+                android:fontFamily="@font/cairo_regular"
                 android:maxLines="1"
                 android:scrollHorizontally="false"
                 android:singleLine="false"

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "187795090752",
+    "project_id": "souq-seller-bf68d",
+    "storage_bucket": "souq-seller-bf68d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187795090752:android:99c0865ad3e39ad3115ea5",
+        "android_client_info": {
+          "package_name": "com.example.souqseller"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZh5NKKx_DpkXcD4aW99LZveiVXl6gR7Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

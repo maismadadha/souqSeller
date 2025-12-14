@@ -10,7 +10,8 @@ import com.example.souqseller.activities.pojo.Product
 import com.example.souqseller.databinding.RvProductsItemBinding
 
 class ProductsManagerAdapter(
-    private val products: List<Product>
+    private val products: MutableList<Product>,
+    private val onDeleteClick: (Product, Int) -> Unit
 ) : RecyclerView.Adapter<ProductsManagerAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: RvProductsItemBinding) :
@@ -39,8 +40,8 @@ class ProductsManagerAdapter(
             .into(holder.binding.productImg)
 
         // زر تعديل المنتج
-        holder.binding.btnEditProduct.setOnClickListener {
-
+        holder.binding.btnDeleteProduct.setOnClickListener {
+            onDeleteClick(item, position)
         }
 
 

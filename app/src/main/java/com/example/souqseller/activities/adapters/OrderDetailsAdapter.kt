@@ -1,6 +1,7 @@
 package com.example.souqseller.activities.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -28,7 +29,17 @@ class OrderDetailsAdapter( private var items: List<OrderItem>): RecyclerView.Ada
         val item = items[position]
 
         holder.binding.itemDescription.text = item.product?.description ?: ""
-        holder.binding.itemCustomizations.text = item.customizations?.toString() ?: ""
+        val customizationText = item.customizations
+            ?.entries
+            ?.joinToString(" • ") { (key, value) -> "$key: $value" }
+            ?: ""
+
+        if (customizationText.isEmpty()) {
+            holder.binding.itemCustomizations.visibility = View.GONE
+        } else {
+            holder.binding.itemCustomizations.visibility = View.VISIBLE
+            holder.binding.itemCustomizations.text = customizationText
+        }
         holder.binding.itemName.text = item.product?.name ?: "منتج"
         holder.binding.itemCount.text = "${item.quantity}"
         holder.binding.itemPrice.text = "${item.price}"

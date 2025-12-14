@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="0dp"
+    app:strokeWidth="0dp"
+    app:strokeColor="@color/white"
+    android:background="@color/white"
+    android:layout_height="400dp">
+
+    <ImageView
+        android:id="@+id/product_img"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/product_img2"
+        android:scaleType="centerCrop"/>
+
+</com.google.android.material.card.MaterialCardView>
