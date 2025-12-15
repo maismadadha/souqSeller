@@ -19,9 +19,11 @@ import com.example.souqseller.activities.pojo.ProductImagesItem
 import com.example.souqseller.activities.pojo.ProductOptions
 import com.example.souqseller.activities.pojo.ProductOptionsItem
 import com.example.souqseller.activities.pojo.Products
+import com.example.souqseller.activities.pojo.SellerProfile
 import com.example.souqseller.activities.pojo.StoreCategories
 import com.example.souqseller.activities.pojo.StoreCategoriesItem
 import com.example.souqseller.activities.pojo.UpdateOrderStatusRequest
+import com.example.souqseller.activities.pojo.UpdateSellerProfileRequest
 import com.example.souqseller.activities.pojo.Value
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -132,6 +134,32 @@ interface souqApi {
     fun deleteProduct(
         @Path("id") productId: Int
     ): Call<Void>
+
+    @GET("seller-profiles/{id}")
+    fun getSellerProfile(
+        @Path("id") sellerId: Int
+    ): Call<SellerProfile>
+
+    @PATCH("seller-profiles/{id}")
+    fun updateSellerProfile(
+        @Path("id") sellerId: Int,
+        @Body body: UpdateSellerProfileRequest
+    ): Call<SellerProfile>
+
+
+    @Multipart
+    @POST("seller/upload-logo")
+    fun uploadStoreLogo(
+        @Part image: MultipartBody.Part,
+        @Part("seller_id") sellerId: RequestBody
+    ): Call<ImageUploadResponse>
+
+    @Multipart
+    @POST("seller/upload-cover")
+    fun uploadStoreCover(
+        @Part image: MultipartBody.Part,
+        @Part("seller_id") sellerId: RequestBody
+    ): Call<ImageUploadResponse>
 
 
 

@@ -10,7 +10,7 @@ class SellerProfile (
     val store_cover_url: String?,
     val preparation_days: Int,
     val preparation_hours: Int,
-    val delivery_price: Double?,       // أو Any? لو بدك ترتاحي
+    val delivery_price: Double?,
     val created_at: String,
     val updated_at: String
 )
