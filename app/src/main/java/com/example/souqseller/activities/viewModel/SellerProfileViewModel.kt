@@ -5,8 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.souqcustomer.retrofit.RetrofitInterface
+import com.example.souqseller.activities.pojo.AddressDto
 import com.example.souqseller.activities.pojo.ImageUploadResponse
 import com.example.souqseller.activities.pojo.SellerProfile
+import com.example.souqseller.activities.pojo.StoreCategories
+import com.example.souqseller.activities.pojo.StoreCategoriesItem
 import com.example.souqseller.activities.pojo.UpdateSellerProfileRequest
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -19,7 +22,9 @@ class SellerProfileViewModel : ViewModel() {
 
     private val sellerProfile = MutableLiveData<SellerProfile>()
     private val error = MutableLiveData<String>()
-    private val saving = MutableLiveData<Boolean>()  // عشان تفعل/تعطل الزر بسهولة
+    private val saving = MutableLiveData<Boolean>()
+    private val addressesLive = MutableLiveData<List<AddressDto>>()
+    private val storeCategoriesLive = MutableLiveData<List<StoreCategoriesItem>>()
 
     private var pending = 0
     private var done = 0
@@ -44,9 +49,6 @@ class SellerProfileViewModel : ViewModel() {
             })
     }
 
-    /**
-     * ✅ هاي الدالة الوحيدة اللي بدك تناديها من الاكتيفتي عند الحفظ
-     */
     fun saveAll(
         sellerId: Int,
         request: UpdateSellerProfileRequest,
@@ -55,7 +57,7 @@ class SellerProfileViewModel : ViewModel() {
     ) {
         currentSellerId = sellerId
 
-        pending = 1 // update profile دايمًا
+        pending = 1
         done = 0
         if (logoPart != null) pending++
         if (coverPart != null) pending++
@@ -150,7 +152,104 @@ class SellerProfileViewModel : ViewModel() {
         }
     }
 
+    fun getUserAddresses(userId: Int) {
+        RetrofitInterface.api.getUserAddresses(userId)
+            .enqueue(object : Callback<List<AddressDto>> {
+                override fun onResponse(
+                    call: Call<List<AddressDto>>,
+                    response: Response<List<AddressDto>>
+                ) {
+                    if (response.isSuccessful) {
+                        addressesLive.value = response.body() ?: emptyList()
+                        Log.d("ADDRESSES", response.body().toString())
+                    } else {
+                        addressesLive.value = emptyList()
+                        error.value = "فشل تحميل العناوين"
+                        Log.d("ADDRESSES0", response.body().toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<List<AddressDto>>, t: Throwable) {
+                    addressesLive.value = emptyList()
+                    error.value = t.message
+                    Log.d("ADDRESSES1", t.message.toString())
+                }
+            })
+    }
+    fun setDefaultAddress(userId: Int, addressId: Int) {
+        RetrofitInterface.api.setDefaultAddress(userId, addressId)
+            .enqueue(object : Callback<AddressDto> {
+                override fun onResponse(
+                    call: Call<AddressDto>,
+                    response: Response<AddressDto>
+                ) {
+                    if (response.isSuccessful) {
+                        getUserAddresses(userId)
+                    }
+                }
+
+                override fun onFailure(call: Call<AddressDto>, t: Throwable) {
+                    error.value = t.message
+                }
+            })
+    }
+
+    fun deleteAddress(userId: Int, addressId: Int) {
+        RetrofitInterface.api.deleteAddress(userId, addressId)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        getUserAddresses(userId) // 🔥 تحديث القائمة
+                    } else {
+                        error.value = "فشل حذف العنوان"
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    error.value = t.message
+                }
+            })
+    }
+
+    fun getStoreCategories(storeId: Int) {
+        RetrofitInterface.api.getStoreCategories(storeId)
+            .enqueue(object : Callback<StoreCategories> {
+                override fun onResponse(
+                    call: Call<StoreCategories>,
+                    response: Response<StoreCategories>
+                ) {
+                    if (response.isSuccessful) {
+                        storeCategoriesLive.value = response.body() ?: emptyList()
+                    } else {
+                        storeCategoriesLive.value = emptyList()
+                    }
+                }
+
+                override fun onFailure(call: Call<StoreCategories>, t: Throwable) {
+                    storeCategoriesLive.value = emptyList()
+                }
+            })
+    }
+
+    fun deleteStoreCategory(categoryId: Int, storeId: Int) {
+        RetrofitInterface.api.deleteStoreCategory(categoryId)
+            .enqueue(object : Callback<Unit> {
+                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                    if (response.isSuccessful) {
+                        // 🔄 نعيد تحميل الفئات
+                        getStoreCategories(storeId)
+                    }
+                }
+
+                override fun onFailure(call: Call<Unit>, t: Throwable) {}
+            })
+    }
+
+
     fun getLiveSellerProfile(): LiveData<SellerProfile> = sellerProfile
     fun getLiveError(): LiveData<String> = error
     fun getLiveSaving(): LiveData<Boolean> = saving
+    fun observeAddresses(): LiveData<List<AddressDto>> = addressesLive
+    fun observeStoreCategories(): LiveData<List<StoreCategoriesItem>> =
+        storeCategoriesLive
 }

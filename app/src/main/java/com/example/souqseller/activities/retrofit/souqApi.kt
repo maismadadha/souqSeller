@@ -1,5 +1,6 @@
 package com.example.souqcustomer.retrofit
 
+import com.example.souqseller.activities.pojo.AddressDto
 import com.example.souqseller.activities.pojo.CreateOptionValueRequest
 import com.example.souqseller.activities.pojo.CreateProductOptionRequest
 import com.example.souqseller.activities.pojo.CreateProductOptionsRespons
@@ -161,8 +162,32 @@ interface souqApi {
         @Part("seller_id") sellerId: RequestBody
     ): Call<ImageUploadResponse>
 
+    @GET("users/{id}/addresses")
+    fun getUserAddresses(
+       @Path("id") sellerId: Int
+    ): Call<List<AddressDto>>
 
 
+
+    @PATCH("users/{userId}/addresses/{addressId}/default")
+    fun setDefaultAddress(
+        @Path("userId") userId: Int,
+        @Path("addressId") addressId: Int
+    ): Call<AddressDto>
+
+
+    @DELETE("users/{userId}/addresses/{id}")
+    fun deleteAddress(
+        @Path("userId") userId: Int,
+        @Path("id") addressId: Int
+    ): Call<Void>
+
+
+
+    @DELETE("store-categories/{id}")
+    fun deleteStoreCategory(
+        @Path("id") categoryId: Int
+    ): Call<Unit>
 
 
 }

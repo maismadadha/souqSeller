@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.souqseller.R
 import com.example.souqseller.activities.activities.AccountInformationActivity
+import com.example.souqseller.activities.activities.AddressesActivity
+import com.example.souqseller.activities.activities.StoreCategoriesActivity
 import com.example.souqseller.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {
@@ -32,6 +34,16 @@ class SettingsFragment : Fragment() {
 
         binding.storeInformation.setOnClickListener {
             val intent = Intent(requireContext(), AccountInformationActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.storeAddress.setOnClickListener {
+            val intent = Intent(requireContext(), AddressesActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.storeCategories.setOnClickListener {
+            val intent = Intent(requireContext(), StoreCategoriesActivity::class.java)
             startActivity(intent)
         }
 

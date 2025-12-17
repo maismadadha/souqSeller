@@ -16,6 +16,18 @@
         android:theme="@style/Theme.SouqSeller"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.activities.StoreCategoriesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.activities.AddNewAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.activities.AddressDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.activities.AddressesActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.activities.AccountInformationActivity"
             android:exported="false" />
         <activity
