@@ -1,8 +1,10 @@
 package com.example.souqseller.activities.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.souqseller.R
 import com.example.souqseller.databinding.RvPreparingOrdersItemBinding
 import com.example.souqseller.activities.interface0.OnClick
 import com.example.souqseller.activities.pojo.OrderResponse
@@ -20,9 +22,9 @@ class PreparingOrdersAdapter(
         RecyclerView.ViewHolder(binding.root)
 
     private val dateFormatter =
-        DateTimeFormatter.ofPattern("d MMMM", Locale("ar"))  // مثال: 15 نوفمبر
+        DateTimeFormatter.ofPattern("d MMMM", Locale("ar"))
     private val timeFormatter =
-        DateTimeFormatter.ofPattern("h:mm a", Locale("ar"))   // مثال: 9:21 م
+        DateTimeFormatter.ofPattern("h:mm a", Locale("ar"))
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -42,26 +44,56 @@ class PreparingOrdersAdapter(
     ) {
         val item = orders[position]
 
-        // التاريخ و الوقت
+
         holder.binding.orderDate.text = formatDate(item.created_at)
         holder.binding.orderTime.text = formatTime(item.created_at)
 
-        // اسم الزبون
+
         holder.binding.customerName.text = item.customer_name ?: "زبون"
 
-        // رقم الطلب
+
         holder.binding.orderNumber.text = "#${item.id}"
 
-        // عدد المنتجات
+
         holder.binding.productCount.text = "${item.items_count}"
 
-        // طريقة الدفع
+
         holder.binding.paymentMethod.text = paymentMethodToArabic(item.payment_method)
 
-        // السعر الكلي
+
         holder.binding.totalPrice.text = item.total_price
 
-        // كليك على الكارد
+        holder.binding.status.visibility = View.GONE
+
+        // 👇 منطق الحالة
+        when (item.status) {
+
+            "READY_FOR_PICKUP" -> {
+                holder.binding.status.visibility = View.VISIBLE
+                holder.binding.status.text = "بانتظار السائق"
+                holder.binding.status.setTextColor(
+                    holder.itemView.context.getColor(R.color.gray_search_text)
+                )
+            }
+
+            "OUT_FOR_DELIVERY" -> {
+                holder.binding.status.visibility = View.VISIBLE
+                holder.binding.status.text = "قيد التوصيل"
+                holder.binding.status.setTextColor(
+                    holder.itemView.context.getColor(R.color.mauve)
+                )
+            }
+            "DELIVERED" -> {
+                holder.binding.status.visibility = View.VISIBLE
+                holder.binding.status.text = "بانتظار استلام المبلغ"
+                holder.binding.status.setTextColor(
+                    holder.itemView.context.getColor(R.color.green_for_price)
+                )
+            }
+
+        }
+
+
         holder.itemView.setOnClickListener {
             val pos = holder.adapterPosition
             if (pos != RecyclerView.NO_POSITION) {

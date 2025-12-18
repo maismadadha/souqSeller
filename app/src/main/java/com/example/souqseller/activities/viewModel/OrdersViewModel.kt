@@ -19,6 +19,8 @@ class OrdersViewModel : ViewModel() {
     private val statusUpdated = MutableLiveData<Boolean>()
 
 
+
+
     fun getOrdersByStatus(seseionId: Int, status: String) {
         RetrofitInterface.api.getStoreOrders(seseionId, status).enqueue(object :
             Callback<List<OrderResponse>> {
@@ -106,6 +108,26 @@ class OrdersViewModel : ViewModel() {
                 }
             })
     }
+    fun getOrdersForStore(storeId: Int) {
+        RetrofitInterface.api.getOrdersForStore(storeId)
+            .enqueue(object : Callback<List<OrderResponse>> {
+
+                override fun onResponse(
+                    call: Call<List<OrderResponse>>,
+                    response: Response<List<OrderResponse>>
+                ) {
+                    if (response.isSuccessful) {
+                        orders.postValue(response.body())
+                    } else {
+                        errorLiveData.postValue("فشل تحميل الطلبات")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<OrderResponse>>, t: Throwable) {
+                    errorLiveData.postValue(t.message)
+                }
+            })
+    }
 
 
     fun observeOrdersLiveData(): LiveData<List<OrderResponse>> {
@@ -116,6 +138,8 @@ class OrdersViewModel : ViewModel() {
     }
     fun observeErrorLiveData(): LiveData<String> = errorLiveData
     fun observeStatusUpdated(): LiveData<Boolean> = statusUpdated
+
+
 
 
 }

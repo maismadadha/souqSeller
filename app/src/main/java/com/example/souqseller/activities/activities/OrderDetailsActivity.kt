@@ -24,6 +24,8 @@ class OrderDetailsActivity : AppCompatActivity() {
 
     private var orderId: Int = 0
     private var currentStatus: String = ""
+    private var paymentMethod: String = ""
+
 
     private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM", Locale("ar"))
     private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale("ar"))
@@ -49,7 +51,7 @@ class OrderDetailsActivity : AppCompatActivity() {
         observeError()
         viewModel.observeStatusUpdated().observe(this) { updated ->
             if (updated == true) {
-                finish()   // ← هيك بس لما تتغير الحالة يطلعك
+                finish()
             }}
 
         binding.back.setOnClickListener { finish() }
@@ -58,6 +60,8 @@ class OrderDetailsActivity : AppCompatActivity() {
     private fun observeOrderDetails() {
         viewModel.observeOrderDetailsLiveData().observe(this) { order ->
             currentStatus = order.status ?: ""
+            paymentMethod = order.payment_method ?: ""
+
 
             loadOrderToUI(order)
             setupStatusButton()
@@ -97,6 +101,10 @@ class OrderDetailsActivity : AppCompatActivity() {
 
 
     private fun setupStatusButton() {
+        binding.statusButton.visibility = View.VISIBLE
+        binding.statusButton.isEnabled = true
+        binding.cancelButton.visibility = View.GONE
+
         when (currentStatus) {
 
             "CONFIRMED" -> {
@@ -118,40 +126,83 @@ class OrderDetailsActivity : AppCompatActivity() {
             }
 
             "PREPARING" -> {
-                binding.statusButton.text = "جاهز للتوصيل"
+                binding.statusButton.text = "تم التجهيز"
                 binding.statusButton.isEnabled = true
                 binding.cancelButton.visibility = View.GONE
 
                 binding.statusButton.setOnClickListener {
-                    showDialog("جاهز للتوصيل", "هل تريد جعل الطلب جاهز للتوصيل؟") {
+                    showDialog("تم التجهيز", "هل تم تجهيز الطلب؟") {
+                        viewModel.updateOrderStatus(orderId, "READY_FOR_PICKUP")
+                    }
+                }
+            }
+
+            "READY_FOR_PICKUP" -> {
+                binding.statusButton.text = "تسليم للمندوب"
+                binding.statusButton.isEnabled = true
+                binding.cancelButton.visibility = View.GONE
+
+
+                binding.statusButton.setOnClickListener {
+                    showDialog("تسليم للمندوب", "هل تم تسليم الطلب للمندوب؟") {
                         viewModel.updateOrderStatus(orderId, "OUT_FOR_DELIVERY")
                     }
                 }
             }
 
-            "OUT_FOR_DELIVERY" -> {
-                binding.statusButton.text = "استلمها المندوب"
-                binding.statusButton.isEnabled = true
-                binding.cancelButton.visibility = View.GONE
 
-                binding.statusButton.setOnClickListener {
-                    showDialog("تسليم المندوب", "هل تم استلام الطلب من قبل المندوب؟") {
-                        viewModel.updateOrderStatus(orderId, "DELIVERED")
-                    }
+            "OUT_FOR_DELIVERY" -> {
+
+                if (paymentMethod == "cash") {
+                    binding.statusButton.visibility = View.GONE
+
+
+                    binding.note.text =
+                        "بانتظار وصول الطلب حتى تتمكن من استلام المبلغ"
+                } else {
+
+                    binding.statusButton.visibility = View.GONE
+
+
                 }
             }
 
-            "DELIVERED" -> {
-                binding.statusButton.text = "تم التسليم"
+            "CASH_COLLECTED" -> {
+                binding.statusButton.text = "تم إغلاق الطلب"
                 binding.statusButton.isEnabled = false
                 binding.cancelButton.visibility = View.GONE
+                binding.statusButton.visibility = View.GONE
             }
+
 
             "CANCELLED" -> {
                 binding.statusButton.text = "تم إلغاء الطلب"
                 binding.statusButton.isEnabled = false
                 binding.cancelButton.visibility = View.GONE
             }
+
+            "DELIVERED" -> {
+
+                if (paymentMethod == "cash") {
+                    binding.statusButton.visibility = View.VISIBLE
+                    binding.statusButton.isEnabled = true
+                    binding.statusButton.text = "تم استلام المبلغ"
+                    binding.cancelButton.visibility = View.GONE
+
+                    binding.statusButton.setOnClickListener {
+                        showDialog(
+                            "تأكيد استلام المبلغ",
+                            "هل تم استلام كامل المبلغ من المندوب؟"
+                        ) {
+                            viewModel.updateOrderStatus(orderId, "CASH_COLLECTED")
+                        }
+                    }
+                } else {
+                    // بطاقة → الطلب منتهي فعلًا
+                    binding.statusButton.visibility = View.GONE
+                }
+            }
+
 
             else -> {
                 binding.statusButton.text = "غير معروف"

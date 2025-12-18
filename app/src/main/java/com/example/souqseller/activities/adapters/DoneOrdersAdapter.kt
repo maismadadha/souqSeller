@@ -10,6 +10,9 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import android.view.View
+import com.example.souqseller.R
+
 
 class DoneOrdersAdapter(
     var orders: List<OrderResponse>,
@@ -45,6 +48,24 @@ class DoneOrdersAdapter(
         holder.binding.paymentMethod.text = paymentMethodToArabic(item.payment_method)
 
         holder.binding.totalPrice.text = item.total_price
+
+        when {
+            item.status == "OUT_FOR_DELIVERY" && item.payment_method == "card" -> {
+                holder.binding.status.visibility = View.VISIBLE
+                holder.binding.status.text = "قيد التوصيل • مدفوع"
+                holder.binding.status.setTextColor(
+                    holder.itemView.context.getColor(R.color.mauve)
+                )
+            }
+
+            else -> {
+                holder.binding.status.visibility = View.VISIBLE
+                holder.binding.status.text = "مدفوع"
+                holder.binding.status.setTextColor(
+                    holder.itemView.context.getColor(R.color.green_for_price)
+                )
+            }
+        }
 
         holder.itemView.setOnClickListener {
             listener.onClick(position)

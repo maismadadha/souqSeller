@@ -189,5 +189,9 @@ interface souqApi {
         @Path("id") categoryId: Int
     ): Call<Unit>
 
+    @GET("orders/store")
+    fun getOrdersForStore(
+        @Query("store_id") storeId: Int
+    ): Call<List<OrderResponse>>
 
 }

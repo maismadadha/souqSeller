@@ -5,56 +5,127 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.souqseller.R
+import com.example.souqseller.activities.adapters.WalletOrdersAdapter
+import com.example.souqseller.activities.pojo.OrderResponse
+import com.example.souqseller.activities.viewModel.OrdersViewModel
+import com.example.souqseller.databinding.FragmentWalletBinding
+import java.util.Locale
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [WalletFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class WalletFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private lateinit var binding: FragmentWalletBinding
+    private lateinit var viewModel: OrdersViewModel
+    private val walletOrders = mutableListOf<OrderResponse>()
+    private lateinit var adapter: WalletOrdersAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        viewModel = ViewModelProvider(this)[OrdersViewModel::class.java]
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallet, container, false)
+        binding = FragmentWalletBinding.inflate(inflater, container, false)
+        return binding.root
+
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val prefs = requireContext()
+            .getSharedPreferences("souq_prefs", AppCompatActivity.MODE_PRIVATE)
+
+        val sellerId = prefs.getInt("SELLER_ID", 0)
+
+        adapter = WalletOrdersAdapter(walletOrders)
+        binding.rvOrders.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvOrders.adapter = adapter
+
+
+        observeOrders()
+        viewModel.getOrdersForStore(sellerId)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment WalletFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            WalletFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun observeOrders() {
+        viewModel.observeOrdersLiveData().observe(viewLifecycleOwner) { orders ->
+            if (orders.isNullOrEmpty()) {
+                binding.tvTotalIncome.text = "0 JD"
+                return@observe
             }
+
+            walletOrders.clear()
+
+
+            val visibleOrders = orders.filter { shouldShowInWallet(it) }
+
+            walletOrders.addAll(visibleOrders)
+
+            val totalIncome = walletOrders.sumOf { orderIncome(it) }
+            binding.tvTotalIncome.text =
+                String.format(Locale.US, "%.2f JD", totalIncome)
+
+
+            android.util.Log.d("WALLET", "Visible orders = ${walletOrders.size}")
+            android.util.Log.d("WALLET", "Total income = $totalIncome")
+
+
+
+            adapter.notifyDataSetChanged()
+
+
+            val finishedCount = walletOrders.count { order ->
+                orderIncome(order) > 0
+            }
+
+
+            val processingCount = walletOrders.count { order ->
+                orderIncome(order) == 0.0
+            }
+
+
+
+            binding.finishedOrders.text = finishedCount.toString()
+            binding.processingOrders.text = processingCount.toString()
+
+
+        }
     }
+
+
+
+
+
+
+    fun shouldShowInWallet(order: OrderResponse): Boolean {
+        return order.status !in listOf(
+            "ON_CART",
+            "CONFIRMED",
+            "CANCELLED"
+        )
+    }
+
+    fun orderIncome(order: OrderResponse): Double {
+        return when {
+            order.payment_method == "card" &&
+                    order.status !in listOf("ON_CART", "CONFIRMED", "CANCELLED") ->
+                order.total_price.toDouble()
+
+            order.payment_method == "cash" &&
+                    order.status == "CASH_COLLECTED" ->
+                order.total_price.toDouble()
+
+            else -> 0.0
+        }
+    }
+
+
 }

@@ -12,4 +12,5 @@
     <color name="gray_strok_order_box">#D5D5D5</color>
     <color name="white_cart_item">#F4F4F4</color>
     <color name="green_for_price">#4CAF50</color>
+    <color name="red">#D11B1B</color>
 </resources>
