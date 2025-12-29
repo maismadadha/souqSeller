@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.souqseller.databinding.ItemSmallImageBinding
+import kotlin.text.category
 
 class ImagesSmallAdapter(
     private val images: List<Uri>,
@@ -21,6 +22,9 @@ class ImagesSmallAdapter(
         fun bind(uri: Uri) {
             Glide.with(binding.root.context)
                 .load(uri)
+                .placeholder(R.drawable.category)
+                .error(R.drawable.category)
+                .centerCrop()
                 .into(binding.ivSmallImage)
 
             binding.ivSmallImage.setOnClickListener {

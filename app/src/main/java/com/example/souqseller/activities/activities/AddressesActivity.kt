@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -28,6 +29,18 @@ class AddressesActivity : AppCompatActivity() {
 
     private var addresses: List<AddressDto> = emptyList()
     private var storeId: Int = 0
+
+
+
+    private val addAddressLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                viewModel.getUserAddresses(storeId)
+            }
+        }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,7 +142,8 @@ class AddressesActivity : AppCompatActivity() {
         binding.back.setOnClickListener { finish() }
 
         binding.addAddressBtn.setOnClickListener {
-            startActivity(Intent(this, AddNewAddressActivity::class.java))
+            val intent = Intent(this, AddNewAddressActivity::class.java)
+            addAddressLauncher.launch(intent)
         }
     }
 

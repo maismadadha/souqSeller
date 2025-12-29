@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.souqseller.R
 import com.example.souqseller.activities.activities.ProductDetailsActivity
 import com.example.souqseller.activities.pojo.Product
 import com.example.souqseller.databinding.RvProductsItemBinding
@@ -37,6 +38,9 @@ class ProductsManagerAdapter(
 
         Glide.with(holder.itemView.context)
             .load(item.main_image_url)
+            .placeholder(R.drawable.category)
+            .error(R.drawable.category)
+            .centerCrop()
             .into(holder.binding.productImg)
 
         // زر تعديل المنتج

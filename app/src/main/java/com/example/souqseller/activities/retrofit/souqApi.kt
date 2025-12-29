@@ -1,12 +1,15 @@
 package com.example.souqcustomer.retrofit
 
 import com.example.souqseller.activities.pojo.AddressDto
+import com.example.souqseller.activities.pojo.AddressRequest
+import com.example.souqseller.activities.pojo.AddressResponse
 import com.example.souqseller.activities.pojo.CreateOptionValueRequest
 import com.example.souqseller.activities.pojo.CreateProductOptionRequest
 import com.example.souqseller.activities.pojo.CreateProductOptionsRespons
 import com.example.souqseller.activities.pojo.CreateProductRespons
 import com.example.souqseller.activities.pojo.CreateSellerRequest
 import com.example.souqseller.activities.pojo.CreateSellerResponse
+import com.example.souqseller.activities.pojo.CreateSliderAdResponse
 import com.example.souqseller.activities.pojo.ImageUploadResponse
 import com.example.souqseller.activities.pojo.LoginRequest
 import com.example.souqseller.activities.pojo.LoginResponse
@@ -21,6 +24,7 @@ import com.example.souqseller.activities.pojo.ProductOptions
 import com.example.souqseller.activities.pojo.ProductOptionsItem
 import com.example.souqseller.activities.pojo.Products
 import com.example.souqseller.activities.pojo.SellerProfile
+import com.example.souqseller.activities.pojo.SliderAd
 import com.example.souqseller.activities.pojo.StoreCategories
 import com.example.souqseller.activities.pojo.StoreCategoriesItem
 import com.example.souqseller.activities.pojo.UpdateOrderStatusRequest
@@ -193,5 +197,30 @@ interface souqApi {
     fun getOrdersForStore(
         @Query("store_id") storeId: Int
     ): Call<List<OrderResponse>>
+
+    @Multipart
+    @POST("slider-ads")
+     fun createSliderAd(
+        @Part image: MultipartBody.Part?,   // صورة من التلفون
+        @Part("image_url") imageUrl: RequestBody?, // رابط (للسيدير / ديمو)
+        @Part("store_id") storeId: RequestBody,
+        @Part("title") title: RequestBody?,
+        @Part("description") description: RequestBody?,
+        @Part("start_date") startDate: RequestBody,
+        @Part("end_date") endDate: RequestBody
+    ): Call<CreateSliderAdResponse>
+
+    @GET("slider-ads")
+    fun getSliderAds(
+        @Query("store_id") storeId: Int,
+        @Query("activeOnly") activeOnly: Boolean = true
+    ): Call<List<SliderAd>>
+
+    @POST("users/{id}/addresses")
+    fun addAddress(
+        @Path("id") id: Int,
+        @Body body: AddressRequest
+    ): Call<AddressResponse>
+
 
 }

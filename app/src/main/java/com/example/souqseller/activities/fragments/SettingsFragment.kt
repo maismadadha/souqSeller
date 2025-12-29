@@ -8,7 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.souqseller.R
 import com.example.souqseller.activities.activities.AccountInformationActivity
+import com.example.souqseller.activities.activities.AddNewAdsActivity
 import com.example.souqseller.activities.activities.AddressesActivity
+import com.example.souqseller.activities.activities.LoginActivity
+import com.example.souqseller.activities.activities.MyAdsActivity
 import com.example.souqseller.activities.activities.StoreCategoriesActivity
 import com.example.souqseller.databinding.FragmentSettingsBinding
 
@@ -46,6 +49,20 @@ class SettingsFragment : Fragment() {
             val intent = Intent(requireContext(), StoreCategoriesActivity::class.java)
             startActivity(intent)
         }
+
+        binding.storeAds.setOnClickListener {
+            val intent = Intent(requireContext(), AddNewAdsActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.myAds.setOnClickListener {
+            val intent = Intent(requireContext(), MyAdsActivity::class.java)
+            startActivity(intent)
+        }
+
+
+
+
 
     }
 

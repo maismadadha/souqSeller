@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.souqseller.R
 import com.example.souqseller.activities.interface0.OnClick
 import com.example.souqseller.activities.pojo.OrderItem
 import com.example.souqseller.activities.pojo.Product
@@ -46,6 +47,9 @@ class OrderDetailsAdapter( private var items: List<OrderItem>): RecyclerView.Ada
 
         Glide.with(holder.itemView.context)
             .load(item.product?.main_image_url)
+            .placeholder(R.drawable.category)
+            .error(R.drawable.category)
+            .centerCrop()
             .into(holder.binding.itemImage)
     }
 
